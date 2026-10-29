@@ -1,0 +1,12 @@
+# Build output
+/build/
+/ptop
+*.o
+*.d
+
+# Local tool settings
+.claude/
+.vscode/
+
+# Personal notes
+ptop-plan*.md

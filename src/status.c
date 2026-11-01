@@ -2,12 +2,9 @@
 
 #include "status.h"
 
-
-
-//This function returns a string that could be written to stderr or log file from error code.
-
+// This function returns a string that could be written to stderr or log file from error code.
 const char *ptop_get_error_message(enum error_code code) {
-    switch(code) {
+    switch (code) {
         case PTOP_SUCCESS:
             return "success";
         case PTOP_USAGE_ERROR:

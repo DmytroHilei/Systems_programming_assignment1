@@ -27,6 +27,8 @@ that uses more than one core can show more than 100%
 
 ![make test](docs/screenshots/03-make-test.png)
 
+![make format, then make clean && make && make test](docs/screenshots/20-make-format.png)
+
 ### Running ptop
 
 | Command | What it does |

@@ -23,8 +23,7 @@ static const char *level_word(enum ptop_log_level level) {
 
 // errnum == 0 means no "strerror" part
 
-static void log_write(enum ptop_log_level level, int errnum,
-                      const char *format, va_list ap) {
+static void log_write(enum ptop_log_level level, int errnum, const char *format, va_list ap) {
     if (level > current_log_level) {
         return; // Less important than the current level
     }

@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-//small helpers that do not belong anywhere else
-
-// SPDX-License-Identifier: MIT
+// small helpers that do not belong anywhere else
 
 #ifndef UTIL_H
 #define UTIL_H
@@ -19,4 +17,3 @@ void sleep_ms(long ms);
 double now_sec(void);
 
 #endif // UTIL_H
-

@@ -49,7 +49,7 @@ static enum error_code read_one(pid_t pid, struct proc_info *out) {
         out->uid = st.st_uid;
     }
     return status;
-}
+} //I need to double check the type of the file, otherwise it is the ordinary read of the file with the buffer, nothing special
 
 static enum error_code proc_list_push(struct proc_list *l, const struct proc_info *p) {
     if (l->len == l->cap) {
@@ -66,11 +66,11 @@ static enum error_code proc_list_push(struct proc_list *l, const struct proc_inf
 
     l->items[l->len++] = *p;
     return PTOP_SUCCESS;
-}
+} //check the cap and len (l struct in other words) how and what exactly does it push
 
 void proc_list_init(struct proc_list *l) {
     *l = (struct proc_list){0};
-}
+} //check the syntaxis 
 
 void proc_list_free(struct proc_list *l) {
     free(l->items);
@@ -90,6 +90,7 @@ enum error_code proc_list_read(struct proc_list *out) {
     out->len = 0;
 
     // errno is reset every round: it is the only way to tell an error from the end
+    //eerno there is interesting moment, readdir, how and why read_one (so check the structure of the files overall)
     while (errno = 0, entry = readdir(dir), entry != NULL) {
         long pid;
         struct proc_info info;
@@ -122,7 +123,7 @@ enum error_code proc_list_read(struct proc_list *out) {
 enum error_code proc_parse_stat(const char *line, struct proc_info *out) {
     // The name may contain spaces and ')', so it ends at the last ')'
     const char *open_paren = strchr(line, '(');
-    const char *close_paren = strrchr(line, ')');
+    const char *close_paren = strrchr(line, ')'); //check those 2 functions
     int pid;
     unsigned long long utime, stime, rss_pages;
 
@@ -137,7 +138,7 @@ enum error_code proc_parse_stat(const char *line, struct proc_info *out) {
     int fields = sscanf(close_paren + 1,
                         " %c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %llu %llu"
                         " %*d %*d %*d %*d %*d %*d %*u %*u %llu",
-                        &out->state, &utime, &stime, &rss_pages);
+                        &out->state, &utime, &stime, &rss_pages); //check this one
     if (fields != 4) {
         return PTOP_PARSE_ERROR;
     }
@@ -153,7 +154,7 @@ enum error_code proc_parse_stat(const char *line, struct proc_info *out) {
     out->ticks = utime + stime;
     out->rss_bytes = rss_pages * (unsigned long long)sysconf(_SC_PAGESIZE);
     out->cpu_pct = 0.0;
-    return PTOP_SUCCESS;
+    return PTOP_SUCCESS; //structure check of each entry and what information does it carry forward
 }
 
 void proc_compute_cpu(struct proc_list *cur, struct proc_list *prev, double elapsed_sec) {
@@ -177,7 +178,7 @@ void proc_compute_cpu(struct proc_list *cur, struct proc_list *prev, double elap
             double delta = (double)(p->ticks - prev->items[j].ticks);
             p->cpu_pct = 100.0 * delta / (ticks_per_sec * elapsed_sec);
         }
-    }
+    } // the formula check
 }
 
 static int cmp_pid(const void *a, const void *b) {
@@ -300,7 +301,7 @@ enum error_code core_list_read(struct core_list *out) {
     }
 
     fclose(f); // Opened for reading: a failure here cannot lose data
-    return result;
+    return result; //check the outline of this file, same point that needs to be verified
 }
 
 void core_compute_usage(struct core_list *cur, const struct core_list *prev) {

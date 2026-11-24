@@ -30,10 +30,10 @@ enum error_code args_parse(int argc, char *argv[], struct options *o) {
         {"help", no_argument, NULL, 'h'},
         {"verbose", no_argument, NULL, 'v'},
         {NULL, 0, NULL, 0},
-    };
+    }; //This syntaxis needs review
     int r;
 
-    *o = (struct options){.sort = SORT_CPU};
+    *o = (struct options){.sort = SORT_CPU}; //review
 
     while (r = getopt_long(argc, argv, "hn:s:vw:", long_options, NULL), r != -1) {
         switch (r) {
@@ -58,7 +58,7 @@ enum error_code args_parse(int argc, char *argv[], struct options *o) {
                 if (parse_long(optarg, 1, MAX_INTERVAL_S, &o->interval_s) != PTOP_SUCCESS) {
                     log_message(PTOP_LOG_ERR, "interval must be 1 to %ld seconds: '%s'",
                                 MAX_INTERVAL_S, optarg);
-                    return PTOP_USAGE_ERROR;
+                    return PTOP_USAGE_ERROR; //parse_long check the function
                 }
                 break;
             default: // '?': getopt_long already printed the reason

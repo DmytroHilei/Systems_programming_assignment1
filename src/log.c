@@ -25,15 +25,15 @@ static const char *level_word(enum ptop_log_level level) {
 
 static void log_write(enum ptop_log_level level, int errnum, const char *format, va_list ap) {
     if (level > current_log_level) {
-        return; // Less important than the current level
+        return; // Less important than the current level, but good to double check what exactly this mean
     }
 
     fprintf(stderr, "ptop: %s: ", level_word(level));
-    vfprintf(stderr, format, ap);
+    vfprintf(stderr, format, ap); //vprintf nuances check
     if (errnum != 0) {
         fprintf(stderr, ": %s", strerror(errnum));
     }
-    fputc('\n', stderr);
+    fputc('\n', stderr); //this line
 }
 
 void log_set_level(enum ptop_log_level level) {
@@ -41,16 +41,16 @@ void log_set_level(enum ptop_log_level level) {
 }
 
 void log_message(enum ptop_log_level level, const char *format, ...) {
-    va_list ap;
+    va_list ap; //va format, variable, needs to check documentation quickly on how it is used
 
     va_start(ap, format);
     log_write(level, 0, format, ap);
-    va_end(ap);
+    va_end(ap); //
 }
 
 void log_errno(enum ptop_log_level level, const char *format, ...) {
     int saved_errno = errno; // Save first: any call below may change errno
-    va_list ap;
+    va_list ap; //check what is errno in its idea
 
     va_start(ap, format);
     log_write(level, saved_errno, format, ap);

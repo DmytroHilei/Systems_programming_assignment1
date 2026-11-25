@@ -90,6 +90,31 @@ in all three cases. If stdin or stdout is not a terminal, ptop prints a warning 
 
 ![valgrind ./ptop -n 5](docs/screenshots/19-valgrind.png)
 
+## How it works
+
+![How ptop works](docs/diagrams/ptop-flow-01.png)
+
+A snapshot reads `/proc` twice, 500 ms apart, because CPU usage is the change between two readings.
+Live mode repeats the same read, compute and print steps on a timer. The numbers in circles give a
+suggested order for reading the code.
+
+[ptop-flow.pdf](docs/diagrams/ptop-flow.pdf) has a flowchart of the main functions on each page:
+
+| Page | Functions |
+|---|---|
+| 2 | `main`, `run_snapshot` |
+| 3 | `proc_list_read`, `read_one` |
+| 4 | `proc_parse_stat` |
+| 5 | `proc_list_push` |
+| 6 | `proc_compute_cpu` |
+| 7 | `core_list_read`, `core_compute_usage` |
+| 8 | `render_screen`, `print_row`, `render_flush`, `write_error` |
+| 9 | `tty_enter`, `tty_leave` |
+| 10 | `run_live`, `live_loop`, `tty_wait_key`, `on_signal` |
+
+The diagrams are drawn with TikZ in [ptop-flow.tex](docs/diagrams/ptop-flow.tex). Build them with
+`pdflatex ptop-flow.tex`.
+
 ## Code overview
 
 ### `src/main.c`: program flow

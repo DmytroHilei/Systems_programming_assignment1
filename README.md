@@ -182,4 +182,3 @@ in all three cases. If stdin or stdout is not a terminal, ptop prints a warning 
 - RSS can differ from `ps` by a few MiB on busy processes. The cause has not been confirmed.
 - If a signal arrives just before the program starts waiting, ptop can take up to one interval to
   stop.
-- Pressing any other key in live mode restarts the wait, so holding a key delays the next refresh.

@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-// SPDX-License-Identifier: MIT
-
 #ifndef TTY_H
 #define TTY_H
 

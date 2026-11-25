@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-// SPDX-License-Identifier: MIT
-
 #ifndef PROC_H
 #define PROC_H
 

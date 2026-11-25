@@ -33,7 +33,9 @@ static enum error_code install_signals(void) {
     struct sigaction action = {.sa_handler = on_signal}; // No SA_RESTART: poll must be interrupted
 
     sigemptyset(&action.sa_mask);
-    if (sigaction(SIGINT, &action, NULL) != 0 || sigaction(SIGTERM, &action, NULL) != 0) {
+    // SIGQUIT (Ctrl-\) and SIGHUP would otherwise kill ptop and leave the terminal broken
+    if (sigaction(SIGINT, &action, NULL) != 0 || sigaction(SIGTERM, &action, NULL) != 0 ||
+        sigaction(SIGQUIT, &action, NULL) != 0 || sigaction(SIGHUP, &action, NULL) != 0) {
         log_errno(PTOP_LOG_ERR, "cannot install signal handlers");
         return PTOP_SYS_CALL_ERROR;
     }
@@ -95,10 +97,16 @@ static enum error_code run_snapshot(const struct options *o) {
 }
 
 static enum error_code live_loop(const struct options *o, struct sample *prev, struct sample *cur) {
-    int wait_ms = FIRST_SAMPLE_MS;
+    double next_frame = now_sec() + FIRST_SAMPLE_MS / 1000.0;
     enum error_code status = sample_read(prev);
 
     while (status == PTOP_SUCCESS && !stop_requested) {
+        // Wait only for what is left, so pressing keys does not push the next frame back
+        int wait_ms = (int)((next_frame - now_sec()) * 1000.0);
+        if (wait_ms < 0) {
+            wait_ms = 0;
+        }
+
         int key = tty_wait_key(wait_ms);
 
         if (key == 'q' || key == -1) {
@@ -127,7 +135,7 @@ static enum error_code live_loop(const struct options *o, struct sample *prev, s
         struct sample *swap = prev;
         prev = cur;
         cur = swap;
-        wait_ms = (int)(o->interval_s * 1000);
+        next_frame = now_sec() + (double)o->interval_s;
     }
     return status;
 }

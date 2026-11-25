@@ -7,7 +7,7 @@ OBJS := $(SRCS:src/%.c=$(BUILD)/%.o)
 TEST_OBJS := $(filter-out $(BUILD)/main.o,$(OBJS))
 
 
-CFLAGS := -std=gnu17 -Wall -Wextra -Wshadow -MMD -MP
+CFLAGS := -std=gnu17 -Wall -Wextra -Wshadow -MMD -MP -Iinclude
 OPT := -O2
 
 .PHONY: all debug test format clean
@@ -29,13 +29,13 @@ debug:
 	$(MAKE) BUILD=build/debug TARGET=build/debug/ptop OPT="-g -O0 -fsanitize=address,undefined"
 
 $(BUILD)/test_proc: tests/test_proc.c $(TEST_OBJS)
-	$(CC) $(CFLAGS) $(OPT) -Isrc -o $@ $^
+	$(CC) $(CFLAGS) $(OPT) -o $@ $^
 
 test: $(BUILD)/test_proc
 	./$<
 
 format:
-	clang-format -i src/*.c src/*.h tests/*.c
+	clang-format -i src/*.c include/*.h tests/*.c
 
 clean:
 	rm -rf $(BUILD) ptop

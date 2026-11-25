@@ -94,7 +94,7 @@ static enum error_code run_snapshot(const struct options *o) {
     sample_free(&prev);
     sample_free(&cur);
     return status;
-}
+} //Begin with this one
 
 static enum error_code live_loop(const struct options *o, struct sample *prev, struct sample *cur) {
     double next_frame = now_sec() + FIRST_SAMPLE_MS / 1000.0;

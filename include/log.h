@@ -20,6 +20,6 @@ void log_message(enum ptop_log_level level, const char *format, ...)
 void log_errno(enum ptop_log_level level, const char *format, ...)
     __attribute__((format(printf, 2,
                           3))); //__attribute__ format, this if used to tell the compiler that this
-                                //function takes a format string and variable arguments,
+                                // function takes a format string and variable arguments,
 // so it can check the format string against the arguments and warn about mismatches.
 #endif // LOG_H

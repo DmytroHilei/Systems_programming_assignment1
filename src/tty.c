@@ -67,12 +67,24 @@ enum error_code tty_enter(void) {
         return PTOP_TERMINAL_UNAVAILABLE;
     }
 
-    // Change a copy. c_lflag is a bit mask: "&= ~(A | B)" clears bits A and B, keeps the rest.
-    //   ICANON off: input is not collected into lines, 'q' arrives without Enter
+    // Change a copy: saved_termios stays untouched, so tty_leave can put it back.
+    // c_lflag is a bit mask: "&= ~(A | B)" clears bits A and B, keeps the rest.
+    //   ICANON off: input is not collected into lines, each key reaches read() at once,
+    //               so 'q' works without Enter
     //   ECHO off:   typed keys are not printed over the frame
+    //   ISIG kept:  Ctrl-C still raises SIGINT, so main's handler can exit and restore
+    //               the terminal
+    // The (tcflag_t) cast: ECHO | ICANON is an int, and ~ on an int gives a negative int.
+    // Casting first makes the mask the same unsigned type as c_lflag (no sign warning).
+    //
+    // Ctrl-Z is switched off on its own. It would send SIGTSTP and stop ptop with no cleanup:
+    // the shell would come back with no echo, no line mode and our frame still on screen.
+    // With VSUSP set to _POSIX_VDISABLE, Ctrl-Z is just a byte (0x1A) for read(), not a signal.
+    //
+    // Nothing changes until tcsetattr below applies tio.
     struct termios tio = saved_termios;
-    tio.c_lflag &= ~(tcflag_t)(ECHO | ICANON); // ISIG stays on so Ctrl-C raises SIGINT
-    tio.c_cc[VSUSP] = _POSIX_VDISABLE;         // Ctrl-Z would leave the shell in our screen
+    tio.c_lflag &= ~(tcflag_t)(ECHO | ICANON);
+    tio.c_cc[VSUSP] = _POSIX_VDISABLE;
 
     if (tcsetattr(STDIN_FILENO, TCSANOW, &tio) != 0) { // TCSANOW: apply right away
         log_errno(PTOP_LOG_WARN, "cannot change terminal settings");

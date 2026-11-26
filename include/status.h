@@ -14,8 +14,10 @@ enum error_code {
     PTOP_PROCESS_GONE,
     PTOP_TERMINAL_UNAVAILABLE,
     PTOP_OUTPUT_CLOSED,
-};
+}; // Just handles all of the error codes in a clean way.
 
-const char *ptop_get_error_message(enum error_code code);
+const char *
+ptop_get_error_message(enum error_code code); // This function returns a string that could be
+                                              // written to stderr or log file from error code.
 
 #endif // STATUS_H

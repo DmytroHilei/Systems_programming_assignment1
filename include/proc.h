@@ -13,13 +13,17 @@
 enum proc_sort { SORT_PID, SORT_CPU, SORT_MEM };
 
 struct proc_info {
-    pid_t pid;
-    uid_t uid;
-    char state; // R S D Z T ...
-    char name[PROC_NAME_MAX];
-    unsigned long long ticks; // utime + stime
-    unsigned long long rss_bytes;
-    double cpu_pct; // Filled by proc_compute_cpu
+    pid_t pid;  // The process ID, which is unique for each process
+    uid_t uid;  // The user ID of the process owner, which is unique for each user
+    char state; // R S D Z T ... The state of the process, which is a single character that
+                // indicates the current status of the process
+    char name[PROC_NAME_MAX];     // The name of the process, which is a string that is at most 15
+                                  // characters long and is null-terminated
+    unsigned long long ticks;     // utime + stime, total cpu time used so far
+    unsigned long long rss_bytes; // The resident set size of the process, which is the number of
+                                  // pages that are currently in memory and is multiplied by the
+                                  // page size to get the number of bytes
+    double cpu_pct;               // Filled by proc_compute_cpu
 };
 
 // items is allocated by the read function and freed by the matching free function

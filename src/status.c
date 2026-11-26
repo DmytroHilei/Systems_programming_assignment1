@@ -2,7 +2,11 @@
 
 #include "status.h"
 
-// This function returns a string that could be written to stderr or log file from error code.
+// Error code to text.
+// This function returns a string that could be written to stderr or a log file from an
+// error code. Similar concept to level_word in log.c: just a switch across all of the error
+// codes. No default case, so -Wall warns if a new code is added without a message; the
+// return after the switch covers a value that is not in the enum at all.
 const char *ptop_get_error_message(enum error_code code) {
     switch (code) {
         case PTOP_SUCCESS:
